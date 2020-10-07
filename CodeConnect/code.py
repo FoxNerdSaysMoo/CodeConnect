@@ -3,9 +3,10 @@ from utils import getnewid
 
 class Code:
     
-    def __init__(self, Name: str, Type: str, Inputs: list, Outputs:list, Code: list):
+    def __init__(self, Name: str, Author: str, Type: str, Inputs: list, Outputs:list, Code: list):
         # Save to self
         self.name = Name
+        self.author = Author
         self.type = Type
         self.inputs = Inputs
         self.outputs = Outputs
@@ -16,7 +17,7 @@ class Code:
         # Define values to put in file
         header = "[" + self.name + "]"
         type_statement = "TYPE = " + self.type
-        id_statement = "id = " + getnewid(self.name, save_file) + " " + self.name
+        id_statement = "id = " + self.author + " " + self.name
         input_top = "INPUTS:"
         code_top = "CODE:"
         code = ["~" + item for item in self.code]
@@ -33,7 +34,6 @@ class Code:
                 file.write("\n")
                 file.write(line)
                 
-# Testing code [delete when done]
-test = Code("test2", ".py", [], [], ["print('I just got executed!')"])
-test.save()
-
+if __name__ == '__main__':
+    test = Code("test2", ".py", [], [], ["print('I just got executed!')"])
+    test.save()
