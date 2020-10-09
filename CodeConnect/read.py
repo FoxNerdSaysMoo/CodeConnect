@@ -37,8 +37,5 @@ def get_code(Name, Id, read_file):
     return code
 
 
-def get_code_from_func
-
-
 if __name__ == '__main__':
     code = get_code("test1", '000000', 'default.codeconnect')

@@ -1,3 +1,6 @@
+import errors
+
+
 def getnewid(name: str, read_file: str):
     
     # Define a few variables
@@ -27,3 +30,11 @@ def getnewid(name: str, read_file: str):
     while len(new_id) < 6:
         new_id = "0" + new_id
     return new_id
+
+def striptabs(line):
+    if line.startswith('    '):
+        return line[4:]
+    else: raise errors.InvalidIndentsError(line)
+
+def get_author():
+    return 'Fox'
