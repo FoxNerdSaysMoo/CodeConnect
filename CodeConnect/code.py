@@ -2,7 +2,6 @@ from utils import getnewid
 
 
 class Code:
-    
     def __init__(self, Name: str, Author: str, Type: str, Inputs: list, Outputs:list, Code: list):
         # Save to self
         self.name = Name

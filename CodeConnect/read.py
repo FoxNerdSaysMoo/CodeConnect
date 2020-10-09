@@ -16,6 +16,8 @@ def get_code(Name, Id, read_file):
             # If the line is a header, find out the name
             if line[0] == '[':
                 curr_name = line[1:line.find(']')]
+                if success:
+                    break
                 trimmed_lines.append(line)
                 continue
                 
@@ -31,9 +33,12 @@ def get_code(Name, Id, read_file):
         if not success:
         	raise ItemNotFoundError(f'Item "{Name}" with Id "{Id}", was not found')
     
-    print(trimmed_lines)
     code = Code(Name, trimmed_lines[1].split()[2], trimmed_lines[2].split()[2], [], [], [code[1:] for code in trimmed_lines[7:]])
     return code
 
+
+def get_code_from_func
+
+
 if __name__ == '__main__':
-    get_code("test1", '000000', 'CodeConnect/default.codeconnect')
+    code = get_code("test1", '000000', 'default.codeconnect')
