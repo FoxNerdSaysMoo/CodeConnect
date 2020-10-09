@@ -1,4 +1,4 @@
-from utils import getnewid, striptabs, get_author
+from utils import *
 from errors import *
 import inspect
 
@@ -13,8 +13,7 @@ class Code:
         self.outputs = Outputs
         self.code = Code
     
-    def save(self, save_file = "default.codeconnect"):
-        
+    def save_as_code(self, save_file = "default.codeconnect"):
         # Define values to put in file
         header = "[" + self.name + "]"
         type_statement = "TYPE = " + self.type
@@ -35,7 +34,7 @@ class Code:
                 file.write("\n")
                 file.write(line)
 
-    def func_save(Code, save_file):
+    def save_as_func(Code, save_file):
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
         lines = [define] + ["    " + line for line in Code.code]
 
@@ -43,22 +42,7 @@ class Code:
             file.writelines([line + "\n" for line in lines])
     
     @staticmethod
-    def confirmation(Code):
-        msg = f"""Confirm you want this function:
-              - Author : {Code.author}
-              - Description : A function
-              - Inputs : {Code.anputs}
-              - Outputs : {Code.autputs}
-              - Code size : {len(Code.code)} lines
-              (y/n) """
-        answer = input(msg)
-        if answer == 'y':
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def func_load(func):
+    def load_from_func(func):
         lines = inspect.getsource(func)
         lines = [line for line in lines.split(sep="\n")[1:] if line]
         lines = [striptabs(line) for line in lines]
@@ -83,7 +67,7 @@ class Code:
         return Code
 
     @staticmethod
-    def get_code(Name, Id, read_file):
+    def load_from_file(Name, Id, read_file):
         trimmed_lines = []
         data = [Name] + Id.split()
     
@@ -117,4 +101,4 @@ class Code:
         return code
 
 if __name__ == '__main__':
-    code = Code.get_code("test2", 'Fox', 'default.codeconnect')
+    pass
