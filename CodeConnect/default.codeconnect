@@ -1,23 +1,8 @@
-[test1]
-
-id = 000000 test1
-
-TYPE = .py
-
-INPUTS:
-~output
-
-RETURNS:
-
-CODE:
-~print(output)
-
-
 [test2]
 
 TYPE = .py
 
-id = 000000 test2
+id = Fox test2
 
 INPUTS:
 
@@ -30,20 +15,7 @@ CODE:
 
 TYPE = .py
 
-id = 000001 test2
-
-INPUTS:
-
-RETURNS:
-
-CODE:
-~print('I just got executed!')
-
-[test2]
-
-TYPE = .py
-
-id = 000002 test2
+id = Fox test2
 
 INPUTS:
 

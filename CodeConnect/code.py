@@ -1,4 +1,6 @@
-from utils import getnewid
+from utils import getnewid, striptabs, get_author
+from errors import *
+import inspect
 
 
 class Code:
@@ -32,7 +34,87 @@ class Code:
             for line in lines:
                 file.write("\n")
                 file.write(line)
+
+    def func_save(Code, save_file):
+        define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
+        lines = [define] + ["    " + line for line in Code.code]
+
+        with open(save_file, 'a') as file:
+            file.writelines([line + "\n" for line in lines])
+    
+    @staticmethod
+    def confirmation(Code):
+        msg = f"""Confirm you want this function:
+              - Author : {Code.author}
+              - Description : A function
+              - Inputs : {Code.anputs}
+              - Outputs : {Code.autputs}
+              - Code size : {len(Code.code)} lines
+              (y/n) """
+        answer = input(msg)
+        if answer == 'y':
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def func_load(func):
+        lines = inspect.getsource(func)
+        lines = [line for line in lines.split(sep="\n")[1:] if line]
+        lines = [striptabs(line) for line in lines]
+        lines = [line for line in lines if line]
+        inputs = list(func.__code__.co_varnames)
+
+        name = func.__name__
+
+        func_type = '.py'
+
+        author = get_author()
+
+        Code = Code(
+                    name,
+                    author,
+                    func_type,
+                    inputs,
+                    'No declared outputs',
+                    lines
+                    )
+    
+        return Code
+
+    @staticmethod
+    def get_code(Name, Id, read_file):
+        trimmed_lines = []
+        data = [Name] + Id.split()
+    
+        # Read file
+        with open(read_file, 'r') as lines:
+            curr_name = ""
+            curr_id = 0
+            success = False
+            for line in lines:
+                # If the line is a header, find out the name
+                if line[0] == '[':
+                    curr_name = line[1:line.find(']')]
+                    if success:
+                        break
+                    trimmed_lines.append(line)
+                    continue
                 
+                # If it is the correct header, try to get the id
+                elif curr_name == Name and len(line.split()) >= 1:
+                    if line.split()[0] == 'id':
+                        curr_id = line.split()[2]
+            
+                if curr_name == Name and curr_id == Id:
+                    if line.rstrip():
+                        trimmed_lines.append(line.rstrip())
+                        success = True
+            if not success:
+        	    raise ItemNotFoundError(f'Item "{Name}" with Id "{Id}", was not found')
+
+        code = Code(Name, trimmed_lines[1].split()[2], trimmed_lines[1].split()[2], [], [], [code[1:] for code in trimmed_lines[5:]])
+        return code
+
 if __name__ == '__main__':
-    test = Code("test2", ".py", [], [], ["print('I just got executed!')"])
-    test.save()
+    code = Code.get_code("test2", 'Fox', 'default.codeconnect')
