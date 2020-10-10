@@ -11,11 +11,11 @@ RETURNS:
 CODE:
 ~print('I just got executed!')
 
-[test2]
+[test3]
 
 TYPE = .py
 
-id = Fox test2
+id = Fox test3
 
 INPUTS:
 
@@ -23,3 +23,4 @@ RETURNS:
 
 CODE:
 ~print('I just got executed!')
+~return True

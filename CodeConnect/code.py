@@ -1,6 +1,7 @@
 from utils import *
 from errors import *
 import inspect
+import importlib
 
 
 class Code:
@@ -41,6 +42,16 @@ class Code:
         with open(save_file, 'a') as file:
             file.writelines([line + "\n" for line in lines])
     
+    def get_as_func(Code):
+        define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
+        lines = [define] + ["    " + line + "\n" for line in Code.code]
+
+        with open('func_dump.py', 'w') as funcfile:
+            funcfile.writelines(lines)
+        
+        func = getattr(importlib.import_module('func_dump'), Code.name)
+        return func
+
     @staticmethod
     def load_from_func(func):
         lines = inspect.getsource(func)
@@ -100,5 +111,9 @@ class Code:
         code = Code(Name, trimmed_lines[1].split()[2], trimmed_lines[1].split()[2], [], [], [code[1:] for code in trimmed_lines[5:]])
         return code
 
+
 if __name__ == '__main__':
-    pass
+    code = Code.load_from_file('test2', 'Fox', 'default.codeconnect')
+    func = code.get_as_func()
+    true = func()
+    print(true)
