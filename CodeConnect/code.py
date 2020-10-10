@@ -44,7 +44,7 @@ class Code:
     
     def get_as_func(Code):
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
-        lines = [define] + ["    " + line + "\n" for line in Code.code]
+        lines = [define + "\n"] + ["    " + line + "\n" for line in Code.code]
 
         with open('func_dump.py', 'w') as funcfile:
             funcfile.writelines(lines)
@@ -108,12 +108,38 @@ class Code:
             if not success:
         	    raise ItemNotFoundError(f'Item "{Name}" with Id "{Id}", was not found')
 
-        code = Code(Name, trimmed_lines[1].split()[2], trimmed_lines[1].split()[2], [], [], [code[1:] for code in trimmed_lines[5:]])
+        curr_line = ''
+        inputs = []
+        outputs = []
+        code_lines = []
+        for line in trimmed_lines:
+            if line == 'INPUTS:':
+                curr_line = 'inputs'
+                continue
+            elif line == 'RETURNS:':
+                curr_line = 'outputs'
+                continue
+            elif line == 'CODE:':
+                curr_line = 'code'
+                continue
+            
+            if curr_line == 'inputs':
+                inputs.append(line)
+                continue
+            elif curr_line == 'outputs':
+                outputs.append(line)
+                continue
+            elif curr_line == 'code':
+                code_lines.append(line[1:])
+                continue
+
+        author = ' '.join(trimmed_lines[2].split()[2:])
+        code = Code(Name, author, '.py', inputs, outputs, code_lines)
         return code
 
 
 if __name__ == '__main__':
-    code = Code.load_from_file('test2', 'Fox', 'default.codeconnect')
+    code = Code.load_from_file('test3', 'Fox', 'default.codeconnect')
     func = code.get_as_func()
-    true = func()
+    true = func('hi')
     print(true)

@@ -18,9 +18,11 @@ TYPE = .py
 id = Fox test3
 
 INPUTS:
+output
 
 RETURNS:
 
 CODE:
 ~print('I just got executed!')
+~print(output)
 ~return True
