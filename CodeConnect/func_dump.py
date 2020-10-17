@@ -1,4 +1,4 @@
 def test3(output):
-    print('I just got executed!')
+    print('boop')
     print(output)
-    return True
+    return 'boop'

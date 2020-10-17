@@ -23,6 +23,6 @@ output
 RETURNS:
 
 CODE:
-~print('I just got executed!')
+~print('boop')
 ~print(output)
-~return True
+~return 'boop'

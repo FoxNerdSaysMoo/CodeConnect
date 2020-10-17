@@ -1,11 +1,15 @@
-import errors
+class ItemNotFoundError(Exception):
+    pass
+
+class InvalidIndentsError(Exception):
+    pass
 
 
 def striptabs(line):
     if line.startswith('    '):
         return line[4:]
     else: 
-        raise errors.InvalidIndentsError(line)
+        raise InvalidIndentsError(line)
 
 def get_author():
     return 'Fox'
