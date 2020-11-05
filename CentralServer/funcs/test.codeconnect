@@ -1,0 +1,28 @@
+[test]
+
+TYPE = .py
+
+id = Fox test
+
+INPUTS:
+
+RETURNS:
+
+CODE:
+~print('I just got executed!')
+
+[test]
+
+TYPE = .py
+
+id = FoxNerd test
+
+INPUTS:
+output
+
+RETURNS:
+
+CODE:
+~print('boop')
+~print(output)
+~return 'boop'

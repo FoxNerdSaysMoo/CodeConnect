@@ -18,8 +18,8 @@ def confirmation(Code):
     msg = f"""Confirm you want this function:
               - Author : {Code.author}
               - Description : A function
-              - Inputs : {Code.anputs}
-              - Outputs : {Code.autputs}
+              - Inputs : {Code.inputs}
+              - Outputs : {Code.outputs}
               - Code size : {len(Code.code)} lines
               (y/n) """
     answer = input(msg)

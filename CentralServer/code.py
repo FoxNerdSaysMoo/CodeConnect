@@ -13,7 +13,7 @@ class Code:
         self.outputs = Outputs
         self.code = Code
     
-    def __list__(self):
+    def repr(self):
         header = "[" + self.name + "]"
         type_statement = "TYPE = " + self.type
         id_statement = "id = " + self.author + " " + self.name
@@ -93,14 +93,14 @@ class Code:
         return Code
 
     @staticmethod
-    def load_from_file(Name, Id, read_file):
+    def load_from_file(Name, Author, read_file):
         trimmed_lines = []
-        data = [Name] + Id.split()
+        data = [Name, Author]
     
         # Read file
         with open(read_file, 'r') as lines:
             curr_name = ""
-            curr_id = 0
+            curr_author = ''
             success = False
             for line in lines:
                 # If the line is a header, find out the name
@@ -114,9 +114,9 @@ class Code:
                 # If it is the correct header, try to get the id
                 elif curr_name == Name and len(line.split()) >= 1:
                     if line.split()[0] == 'id':
-                        curr_id = line.split()[2]
+                        curr_author = line.split('=')[-1].split()[0]
             
-                if curr_name == Name and curr_id == Id:
+                if curr_name == Name and curr_author == Author:
                     if line.rstrip():
                         trimmed_lines.append(line.rstrip())
                         success = True
@@ -148,8 +148,62 @@ class Code:
                 code_lines.append(line[1:])
                 continue
 
-        author = ' '.join(trimmed_lines[2].split()[2:])
+        
+        code = Code(Name, Author, '.py', inputs, outputs, code_lines)
+        return code
+
+    @staticmethod
+    def load_from_lines(lines):
+        trimmed_lines = []
+        Name = ""
+        author = ''
+        for     @staticmethod
+    def load_from_server(name, author, serverip):
+        response = request.get(serverip + f'/func/{name}/{author}')
+        responce.raise_for_status()
+        code = load_from_lines(list(responce.json()))
+        return codeline in lines:
+            if line.rstrip():
+                if line[0] == '[':
+                    Name = line[1:line.find(']')]
+                    continue
+                trimmed_lines.append(line.rstrip())
+                if line.startswith('id'):
+                    author = line.split('=')[-1].split()[0]
+
+        curr_line = ''
+        inputs = []
+        outputs = []
+        code_lines = []
+        for line in trimmed_lines:
+            if line == 'INPUTS:':
+                curr_line = 'inputs'
+                continue
+            elif line == 'RETURNS:':
+                curr_line = 'outputs'
+                continue
+            elif line == 'CODE:':
+                curr_line = 'code'
+                continue
+            
+            if curr_line == 'inputs':
+                inputs.append(line)
+                continue
+            elif curr_line == 'outputs':
+                outputs.append(line)
+                continue
+            elif curr_line == 'code':
+                code_lines.append(line[1:])
+                continue
+
         code = Code(Name, author, '.py', inputs, outputs, code_lines)
+        return code
+
+    @staticmethod
+    def load_from_server(name, author, serverip):
+        response = request.get(serverip + f'/func/{name}/{author}')
+        responce.raise_for_status()
+        code = load_from_lines(list(responce.json()))
         return code
 
 

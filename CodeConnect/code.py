@@ -2,6 +2,7 @@ from utils import *
 from errors import *
 import inspect
 import importlib
+import requests
 
 
 class Code:
@@ -14,7 +15,7 @@ class Code:
         self.outputs = Outputs
         self.code = Code
     
-    def __list__(self):
+    def repr(self):
         header = "[" + self.name + "]"
         type_statement = "TYPE = " + self.type
         id_statement = "id = " + self.author + " " + self.name
@@ -151,6 +152,55 @@ class Code:
 
         author = ' '.join(trimmed_lines[2].split()[2:])
         code = Code(Name, author, '.py', inputs, outputs, code_lines)
+        return code
+
+    @staticmethod
+    def load_from_lines(lines):
+        trimmed_lines = []
+        Name = ""
+        author = ''
+        for line in lines:
+            if line.rstrip():
+                if line[0] == '[':
+                    Name = line[1:line.find(']')]
+                    continue
+                trimmed_lines.append(line.rstrip())
+                if line.startswith('id'):
+                    author = line.split('=')[-1].split()[0]
+
+        curr_line = ''
+        inputs = []
+        outputs = []
+        code_lines = []
+        for line in trimmed_lines:
+            if line == 'INPUTS:':
+                curr_line = 'inputs'
+                continue
+            elif line == 'RETURNS:':
+                curr_line = 'outputs'
+                continue
+            elif line == 'CODE:':
+                curr_line = 'code'
+                continue
+            
+            if curr_line == 'inputs':
+                inputs.append(line)
+                continue
+            elif curr_line == 'outputs':
+                outputs.append(line)
+                continue
+            elif curr_line == 'code':
+                code_lines.append(line[1:])
+                continue
+
+        code = Code(Name, author, '.py', inputs, outputs, code_lines)
+        return code
+
+    @staticmethod
+    def load_from_server(name, author, serverip):
+        response = request.get(serverip + f'/func/{name}/{author}')
+        responce.raise_for_status()
+        code = load_from_lines(list(responce.json()))
         return code
 
 

@@ -1,1 +1,2 @@
-MODE = 'file'
+MODE = 'folder'
+FOLDER = '/funcs/'
