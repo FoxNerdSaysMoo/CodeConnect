@@ -37,7 +37,7 @@ async def func(request, funcname, author):
 async def upload_func(request):
     print(request.args)
     try:
-        addfunc(request.args.get('code'))
+        addfunc(request.args.get('code').strip('][').replace('"','').split(','))
         return response.text('Success')
     except Exception as e:
         return response.text(str(e))

@@ -26,3 +26,27 @@ CODE:
 ~print('boop')
 ~print(output)
 ~return 'boop'
+[test]
+
+TYPE = .py
+
+id = FoxNerdSays test
+
+INPUTS:
+
+RETURNS:
+
+CODE:
+~print('I just got executed!')
+[test]
+
+TYPE = .py
+
+id = FoxNerdSaysMoo test
+
+INPUTS:
+
+RETURNS:
+
+CODE:
+~print('I just got executed!')

@@ -194,7 +194,7 @@ class Code:
             elif curr_line == 'code':
                 code_lines.append(line[1:])
                 continue
-
+        
         code = Code(Name, author, '.py', inputs, outputs, code_lines)
         return code
 
