@@ -27,3 +27,6 @@ def confirmation(Code):
         return True
     else:
         return False
+
+def filter(item):
+    return ''.join([letter for letter in item if letter in 'abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ'])

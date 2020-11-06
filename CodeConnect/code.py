@@ -8,12 +8,17 @@ import requests
 class Code:
     def __init__(self, Name: str, Author: str, Type: str, Inputs: list, Outputs, Code: list):
         # Save to self
-        self.name = Name
-        self.author = Author
-        self.type = Type
-        self.inputs = Inputs
-        self.outputs = Outputs
+        self.name = filter(Name)
+        self.author = filter(Author)
+        self.type = '.py'
+        self.inputs = filter(Inputs)
+        self.outputs = filter(Outputs)
         self.code = Code
+
+        assert self.name, 'Arguments should all have values'
+        assert self.author, 'Arguments should all have values'
+        assert self.type, 'Arguments should all have values'
+        assert self.code, 'Arguments should all have values'
     
     def repr(self):
         header = "[" + self.name + "]"
@@ -45,11 +50,8 @@ class Code:
         lines = [header, "", type_statement, "", id_statement, "", input_top] + inputs + ["", "RETURNS:"] + outputs + ["", code_top] + code
         
         #Write them
-        with open(save_file, "a") as file:
-            file.write("\n")
-            for line in lines:
-                file.write("\n")
-                file.write(line)
+        with open(save_file, 'a') as openfile:
+            openfile.write('\n' + '\n'.join(lines))
 
     def save_as_func(Code, save_file):
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
@@ -62,8 +64,7 @@ class Code:
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
         lines = [define + "\n"] + ["    " + line + "\n" for line in Code.code]
 
-        with open('func_dump.py', 'w') as funcfile:
-            funcfile.writelines(lines)
+        open('func_dump.py', 'w').writelines(lines)
         
         func = getattr(importlib.import_module('func_dump'), Code.name)
         return func
@@ -199,8 +200,12 @@ class Code:
     @staticmethod
     def load_from_server(name, author, serverip):
         response = request.get(serverip + f'/func/{name}/{author}')
-        responce.raise_for_status()
-        code = load_from_lines(list(responce.json()))
+        response.raise_for_status()
+        try:
+            code = load_from_lines(list(responce.json()))
+        except Exception as e:
+            print("Invalid Response From Server:", response)
+            return False
         return code
 
 

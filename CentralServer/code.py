@@ -1,17 +1,24 @@
-from code_externals import *
+from utils import *
+from errors import *
 import inspect
 import importlib
+import requests
 
 
 class Code:
     def __init__(self, Name: str, Author: str, Type: str, Inputs: list, Outputs, Code: list):
         # Save to self
-        self.name = Name
-        self.author = Author
-        self.type = Type
-        self.inputs = Inputs
-        self.outputs = Outputs
+        self.name = filter(Name)
+        self.author = filter(Author)
+        self.type = '.py'
+        self.inputs = filter(Inputs)
+        self.outputs = filter(Outputs)
         self.code = Code
+
+        assert self.name, 'Arguments should all have values'
+        assert self.author, 'Arguments should all have values'
+        assert self.type, 'Arguments should all have values'
+        assert self.code, 'Arguments should all have values'
     
     def repr(self):
         header = "[" + self.name + "]"
@@ -43,11 +50,8 @@ class Code:
         lines = [header, "", type_statement, "", id_statement, "", input_top] + inputs + ["", "RETURNS:"] + outputs + ["", code_top] + code
         
         #Write them
-        with open(save_file, "a") as file:
-            file.write("\n")
-            for line in lines:
-                file.write("\n")
-                file.write(line)
+        with open(save_file, 'a') as openfile:
+            openfile.write('\n' + '\n'.join(lines))
 
     def save_as_func(Code, save_file):
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
@@ -60,8 +64,7 @@ class Code:
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
         lines = [define + "\n"] + ["    " + line + "\n" for line in Code.code]
 
-        with open('func_dump.py', 'w') as funcfile:
-            funcfile.writelines(lines)
+        open('func_dump.py', 'w').writelines(lines)
         
         func = getattr(importlib.import_module('func_dump'), Code.name)
         return func
@@ -93,14 +96,14 @@ class Code:
         return Code
 
     @staticmethod
-    def load_from_file(Name, Author, read_file):
+    def load_from_file(Name, Id, read_file):
         trimmed_lines = []
-        data = [Name, Author]
+        data = [Name] + Id.split()
     
         # Read file
         with open(read_file, 'r') as lines:
             curr_name = ""
-            curr_author = ''
+            curr_id = 0
             success = False
             for line in lines:
                 # If the line is a header, find out the name
@@ -114,9 +117,9 @@ class Code:
                 # If it is the correct header, try to get the id
                 elif curr_name == Name and len(line.split()) >= 1:
                     if line.split()[0] == 'id':
-                        curr_author = line.split('=')[-1].split()[0]
+                        curr_id = line.split()[2]
             
-                if curr_name == Name and curr_author == Author:
+                if curr_name == Name and curr_id == Id:
                     if line.rstrip():
                         trimmed_lines.append(line.rstrip())
                         success = True
@@ -148,8 +151,8 @@ class Code:
                 code_lines.append(line[1:])
                 continue
 
-        
-        code = Code(Name, Author, '.py', inputs, outputs, code_lines)
+        author = ' '.join(trimmed_lines[2].split()[2:])
+        code = Code(Name, author, '.py', inputs, outputs, code_lines)
         return code
 
     @staticmethod
@@ -157,12 +160,7 @@ class Code:
         trimmed_lines = []
         Name = ""
         author = ''
-        for     @staticmethod
-    def load_from_server(name, author, serverip):
-        response = request.get(serverip + f'/func/{name}/{author}')
-        responce.raise_for_status()
-        code = load_from_lines(list(responce.json()))
-        return codeline in lines:
+        for line in lines:
             if line.rstrip():
                 if line[0] == '[':
                     Name = line[1:line.find(']')]
@@ -202,8 +200,12 @@ class Code:
     @staticmethod
     def load_from_server(name, author, serverip):
         response = request.get(serverip + f'/func/{name}/{author}')
-        responce.raise_for_status()
-        code = load_from_lines(list(responce.json()))
+        response.raise_for_status()
+        try:
+            code = load_from_lines(list(responce.json()))
+        except Exception as e:
+            print("Invalid Response From Server:", response)
+            return False
         return code
 
 
