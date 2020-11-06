@@ -96,9 +96,9 @@ class Code:
         return Code
 
     @staticmethod
-    def load_from_file(Name, Id, read_file):
+    def load_from_file(Name, Author, read_file):
         trimmed_lines = []
-        data = [Name] + Id.split()
+        data = [Name] + Author.split()
     
         # Read file
         with open(read_file, 'r') as lines:
@@ -119,12 +119,12 @@ class Code:
                     if line.split()[0] == 'id':
                         curr_id = line.split()[2]
             
-                if curr_name == Name and curr_id == Id:
+                if curr_name == Name and curr_id == Author:
                     if line.rstrip():
                         trimmed_lines.append(line.rstrip())
                         success = True
             if not success:
-        	    raise ItemNotFoundError(f'Item "{Name}" with Id "{Id}", was not found')
+        	    raise ItemNotFoundError(f'Item "{Name}" with Author "{Author}", was not found')
 
         curr_line = ''
         inputs = []
@@ -151,7 +151,8 @@ class Code:
                 code_lines.append(line[1:])
                 continue
 
-        author = ' '.join(trimmed_lines[2].split()[2:])
+        author = Author
+        print(author)
         code = Code(Name, author, '.py', inputs, outputs, code_lines)
         return code
 
