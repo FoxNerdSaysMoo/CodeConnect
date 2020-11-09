@@ -15,10 +15,10 @@ class Code:
         self.outputs = filter(Outputs)
         self.code = Code
 
-        assert self.name, 'Arguments should all have values'
-        assert self.author, 'Arguments should all have values'
-        assert self.type, 'Arguments should all have values'
-        assert self.code, 'Arguments should all have values'
+        assert self.name, 'Arguments should all have values (name)'
+        assert self.author, 'Arguments should all have values (author)'
+        assert self.type, 'Arguments should all have values (type)'
+        assert self.code, 'Arguments should all have values (code)'
     
     def repr(self):
         header = "[" + self.name + "]"
@@ -60,6 +60,9 @@ class Code:
         with open(save_file, 'a') as file:
             file.writelines([line + "\n" for line in lines])
     
+    def save_to_server(Code, serverip):
+        requests.get(serverip+'/addfunc', params={"code": Code.repr()})
+    
     def get_as_func(Code):
         define = f"def {Code.name}({' ,'.join(Code.inputs)}):"
         lines = [define + "\n"] + ["    " + line + "\n" for line in Code.code]
@@ -84,7 +87,7 @@ class Code:
 
         author = get_author()
 
-        Code = Code(
+        code = Code(
                     name,
                     author,
                     func_type,
@@ -93,7 +96,7 @@ class Code:
                     lines
                     )
     
-        return Code
+        return code
 
     @staticmethod
     def load_from_file(Name, Author, read_file):
@@ -200,13 +203,13 @@ class Code:
 
     @staticmethod
     def load_from_server(name, author, serverip):
-        response = request.get(serverip + f'/func/{name}/{author}')
-        response.raise_for_status()
+        response = requests.get(serverip + f'/func/{name}/{author}')
         try:
-            code = load_from_lines(list(responce.json()))
+            code = Code.load_from_lines(list(response.json()))
         except Exception as e:
-            print("Invalid Response From Server:", response)
-            return False
+            print("Invalid Response From Server:", response.body)
+            print(e)
+            return
         return code
 
 

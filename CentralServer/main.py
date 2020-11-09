@@ -3,6 +3,9 @@ from config import *
 import os
 from errors import *
 from code import Code
+from threading import Thread
+import time
+import json
 
 
 app = Sanic(__name__)
@@ -30,17 +33,29 @@ async def func(request, funcname, author):
     try:
         function = getfunc(funcname, author).repr()
     except Exception as e:
+        print(e)
         return response.text(e)
     return response.json(function)
 
 @app.route('/addfunc')
 async def upload_func(request):
-    print(request.args)
     try:
-        addfunc(request.args.get('code').strip('][').replace('"','').split(','))
+        addfunc(json.loads(str(request.args).replace('\'', '"'))['code'])
         return response.text('Success')
     except Exception as e:
+        print(e)
         return response.text(str(e))
 
 
-app.run(host="0.0.0.0", port=8000)
+def cli(host):
+    time.sleep(1)
+    send = Code.load_from_func(cli)
+    send.save_to_server(host)
+    recv = Code.load_from_server('cli', 'Fox', host)
+    print(recv.repr())
+
+
+if __name__ == '__main__':
+    Thread(target=cli, args=['https://CodeConnect.foxnerdsaysmoo.repl.co']).start()
+    app.run(host='0.0.0.0', port=8000)
+    
